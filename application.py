@@ -4,6 +4,7 @@ from ttkbootstrap import Style
 from data_file import dict_of_tasks, dict_of_description, dict_tasks_to_number
 from data_file import dict_of_commands_tasks
 from time import sleep
+import pyperclip
 
 def generate_output():
     input_matrix = get_input_matrix()
@@ -17,12 +18,17 @@ def generate_output():
         matrix = dict_of_commands_tasks[number_of_task](input_matrix)
         frame = ', '.join(['{}' for _ in range(len(matrix[0]))])
         frame = ',\n'.join([frame.format(*matrix[i]) for i in range(len(matrix))])
-        print(frame)
-        print(matrix[0])
-        print(frame.format(*matrix))
         inser_soluthion(frame)
 
     #Добавить решение выбранной задачи
+
+def paste_text_into_line():
+    copied_text = pyperclip.paste()
+    input_text.delete("1.0", "end-1c")
+    input_text.insert('insert', copied_text)
+    input_text.tag_configure("custom_font", font=("Roboto", 12))
+    input_text.tag_add("custom_font", "1.0", "end")
+
 
 def configure_style(event):
     input_text.tag_configure("custom_font", font=("Roboto", 12))
@@ -49,24 +55,23 @@ def make_window():
 
     generate_button = ttk.Button(window, text="Сгенерировать", command=generate_output)
     generate_button.grid(row=4, column=0, padx=10, pady=10)
+
+    button_paste_text = ttk.Button(window, text="Вставить", command=paste_text_into_line)
+    button_paste_text.grid(row=4, column=1, padx=10, pady=10)
     return window, input_text, output_text, description_label
 
 def get_input_matrix():
     matrix = input_text.get("1.0", "end-1c")
-    symbols = ['[', ']', ' ']
+    symbols = ['[', ']', ' ', '\r']
     while any([symbol in matrix for symbol in symbols]):
         for symbol in symbols:
             while symbol in matrix:
                 matrix = matrix.replace(symbol, '')
     matrix = matrix.split('\n')
-    print(matrix)
     while '' in matrix:
         matrix.remove('')
     matrix = [line.rstrip(',') for line in matrix]
-    print(matrix)
     input_matrix = [list(map(int, line.split(','))) for line in matrix]
-    print(type(input_matrix[0][0]))
-    print(input_matrix)
     return input_matrix
 
 def inser_soluthion(soluthion):
