@@ -1,2 +1,7 @@
 a.py
 s.py
+ .idea/
+        Matchsolver/
+        __pycache__/
+        key.txt
+        key.txt.pub
